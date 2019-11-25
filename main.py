@@ -1,4 +1,9 @@
 import requests
+<<<<<<< HEAD
+=======
+import os
+
+>>>>>>> 62249c30947aa640d2b485fa81042c3ff1457514
 """HTTP Cloud Function.
 Args:
     request (flask.Request): The request object.
@@ -9,7 +14,12 @@ Returns:
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
 def graphqlwfs(request):
+<<<<<<< HEAD
     wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=MfGatryANoVWNLZwfkdpTFC1FWhRkwRQ&version=2.0.0&outputformat=geoJSON"
+=======
+    OS_KEY = os.getenv('OS_KEY', '????????')
+    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
+>>>>>>> 62249c30947aa640d2b485fa81042c3ff1457514
     # request_json = request.get_json(silent=True)
     typeNames = request.args.get("typeNames", default="osfeatures:BoundaryLine_PollingDistrict")
     count = request.args.get("count", default=100)
@@ -43,4 +53,8 @@ def graphqlwfs(request):
     # if status_code != 200:
     #     return "NOOOOOO!!!"
     # #     return response.json()
+<<<<<<< HEAD
     # return response.json()
+=======
+    # return response.json()
+>>>>>>> 62249c30947aa640d2b485fa81042c3ff1457514
