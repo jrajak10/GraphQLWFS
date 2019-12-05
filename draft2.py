@@ -1,105 +1,28 @@
-import requests
-import os
-import graphene
-from graphene import ObjectType, String, Schema, Argument
-
-class Query(graphene.ObjectType):
-    hello = graphene.String(description='A typical hello world')
-
-    def resolve_hello(self, info):
-        return 'World'
-
-schema = graphene.Schema(query=Query)
-
-query = '''
-    query SayHello {
-      hello
-    }
-'''
-result = schema.execute(query)
+# from graphene import ObjectType, String, Schema
 
 
+# class Query(ObjectType):
+# # this defines a Field `hello` in our Schema with a single Argument `name`
+# # hello = String(name=String(default_value="stranger"))
+# goodbye = String()
+# # our Resolver method takes the GraphQL context (root, info) as well as
+# # Argument (name) for the Field and returns data for the query Response
+# def resolve_hello(root, info, name):
+#     return f'Hello {name}!'
+# def resolve_goodbye(root, info):
+#     return 'See ya!'
+# schema = Schema(query=Query)
 
 
+# type Query {
+#     hello(name: String = "stranger"): String
+#     goodbye: String
+# }
 
-
-
-
-
-
-
-# """HTTP Cloud Function.
-# Args:
-#     request (flask.Request): The request object.
-#     <http://flask.pocoo.org/docs/1.0/api/#flask.Request>
-# Returns:
-#     The response text, or any set of values that can be turned into a
-#     Response object using `make_response`
-#     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
-# """
-
-# def graphqlwfs(request):
-#     OS_KEY = os.getenv('OS_KEY', '????????')
-#     wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
-#     # request_json = request.get_json(silent=True)
-#     typeNames = request.args.get("typeNames", default="osfeatures:BoundaryLine_PollingDistrict")
-#     count = request.args.get("count", default=100)
-#     PropertyName = request.args.get("PropertyName", default=None)
-#     Literal = request.args.get("Literal", default=None)
-#     payload = {
-#         'typeNames': typeNames,
-#         'count': count
-#     }
-#     if PropertyName != None and Literal != None:
-#         filter = """
-#                 <Filter>
-#                     <PropertyIsEqualTo>
-#                         <PropertyName>{0}</PropertyName>
-#                         <Literal>{1}</Literal>
-#                     </PropertyIsEqualTo>
-#                 </Filter>
-#             """.format(PropertyName, Literal)
-#         payload["filter"] = filter
-#     response = requests.get(wfsApiBaseUrl, params=payload)
-#     payloader = print(">>>>>>>>>>>>>>>> payload", payload)
-#     urlResponse = print(">>>>>>>>>>>>>>>> url", response.url)
-#     txtResponse = print(">>>>>>>>>>>>>>>> text", response.text)
-#     headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
-#     statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
-#     if response.status_code != 200:
-#         return "Please enter a typeName!!! " + str(urlResponse) + str(txtResponse) + str(headerResp) + str(PropertyName) + str(Literal) +str(payload)
-#     else:
-#         features = response.json()
-#     return features
-#     OS_KEY = os.getenv('OS_KEY', '????????')
-#     wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
-#     # request_json = request.get_json(silent=True)
-#     typeNames = request.args.get("typeNames", default="osfeatures:BoundaryLine_PollingDistrict")
-#     count = request.args.get("count", default=100)
-#     PropertyName = request.args.get("PropertyName", default=None)
-#     Literal = request.args.get("Literal", default=None)
-#     payload = {
-#         'typeNames': typeNames,
-#         'count': count
-#     }
-#     if PropertyName != None and Literal != None:
-#         filter = """
-#                 <Filter>
-#                     <PropertyIsEqualTo>
-#                         <PropertyName>{0}</PropertyName>
-#                         <Literal>{1}</Literal>
-#                     </PropertyIsEqualTo>
-#                 </Filter>
-#             """.format(PropertyName, Literal)
-#         payload["filter"] = filter
-#     response = requests.get(wfsApiBaseUrl, params=payload)
-#     payloader = print(">>>>>>>>>>>>>>>> payload", payload)
-#     urlResponse = print(">>>>>>>>>>>>>>>> url", response.url)
-#     txtResponse = print(">>>>>>>>>>>>>>>> text", response.text)
-#     headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
-#     statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
-#     if response.status_code != 200:
-#         return "Please enter a typeName!!! " + str(urlResponse) + str(txtResponse) + str(headerResp) + str(PropertyName) + str(Literal) +str(payload)
-#     else:
-#         features = response.json()
-#     return features
+# query_string = '{ hello }'
+# result = schema.execute(query_string)
+# print(result.data['hello'])
+# # "Hello stranger"
+# # or passing the argument in the query
+# query_with_argument = '{ hello(name: "GraphQL") }'
+# result = schema.execute(query)
