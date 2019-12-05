@@ -1,9 +1,76 @@
 import requests
-<<<<<<< HEAD
-=======
 import os
+import graphene
+ 
+def fetchFeaturesFromWFS(count, typeNames, filters):
+    OS_KEY = os.getenv('OS_KEY', '????????')
+    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=MfGatryANoVWNLZwfkdpTFC1FWhRkwRQ&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
+    payload = {
+        'typeNames': typeNames,
+        'count': count
+    }
+    # TODO: generate <Filter> from filters
+    for k, v in filters.items():
+        if v != "":
+            filter = """
+                <Filter>
+                    <PropertyIsEqualTo>
+                        <PropertyName>{0}</PropertyName>
+                        <Literal>{1}</Literal>
+                    </PropertyIsEqualTo>
+                </Filter>
+            """.format(k, v)
+        payload["filter"] = filter
+    response = requests.get(wfsApiBaseUrl, params=payload)
+    
+    if response.status_code != 200:
+        payloader = print(">>>>>>>>>>>>>>>> payload", payload)
+        urlResponse = print(">>>>>>>>>>>>>>>> url", response.url)
+        txtResponse = print(">>>>>>>>>>>>>>>> text", response.text)
+        headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
+        statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
+        return "Error: Check your logs" 
+    return response.json()['features']
+# Getting started with GraphQL. In this way we can extract data from the query. 
+# {
+#     boundaryLinePollingDistrict (
+#         first: 5
+#         ward: "Bottisham Ward",
+#         parish: "Brinkley CP"  
+#     )
+# }
+# TODO: Next step is to convert this in a proper query.
+class Query(graphene.ObjectType):
+    boundaryLinePollingDistrict = graphene.String( 
+      first=graphene.Int(default_value=10),
+      ward=graphene.String(default_value=None),
+      parish=graphene.String(default_value=None)
+  )
+    
 
->>>>>>> 62249c30947aa640d2b485fa81042c3ff1457514
+    goodbye = graphene.String()
+
+    hello = graphene.String(
+        count=graphene.Int(default_value=10),
+        typeNames=graphene.String(default_value="osfeatures:BoundaryLine_PollingDistrict"), 
+        filters = graphene.String(default_value=None)
+    )   
+
+    def resolve_goodbye(self, info):
+        return "Goodbye World"
+
+  
+    def resolve_hello(self, info, count, typeNames, filters):
+        return fetchFeaturesFromWFS(10, "osfeatures:BoundaryLine_PollingDistrict", filters=filters)
+        
+        # return fetchFeaturesFromWFS(count, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters)
+
+    def resolve_boundaryLinePollingDistrict(self, info, filters):
+        filters = {
+            "ward": "Bottisham Ward",
+           
+        }  
+        return fetchFeaturesFromWFS(count=10, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters) 
 """HTTP Cloud Function.
 Args:
     request (flask.Request): The request object.
@@ -14,47 +81,18 @@ Returns:
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
 def graphqlwfs(request):
-<<<<<<< HEAD
-    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=MfGatryANoVWNLZwfkdpTFC1FWhRkwRQ&version=2.0.0&outputformat=geoJSON"
-=======
-    OS_KEY = os.getenv('OS_KEY', '????????')
-    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
->>>>>>> 62249c30947aa640d2b485fa81042c3ff1457514
-    # request_json = request.get_json(silent=True)
-    typeNames = request.args.get("typeNames", default="osfeatures:BoundaryLine_PollingDistrict")
-    count = request.args.get("count", default=100)
-    PropertyName = request.args.get("PropertyName", default=None)
-    Literal = request.args.get("Literal", default=None)
-    payload = {
-        'typeNames': typeNames,
-        'count': count
-    }
-    if PropertyName != None and Literal != None:
-        filter = """
-                <Filter>
-                    <PropertyIsEqualTo>
-                        <PropertyName>{0}</PropertyName>
-                        <Literal>{1}</Literal>
-                    </PropertyIsEqualTo>
-                </Filter>
-            """.format(PropertyName, Literal)
-        payload["filter"] = filter
-    response = requests.get(wfsApiBaseUrl, params=payload)
-    payloader = print(">>>>>>>>>>>>>>>> payload", payload)
-    urlResponse = print(">>>>>>>>>>>>>>>> url", response.url)
-    txtResponse = print(">>>>>>>>>>>>>>>> text", response.text)
-    headerResp = print(">>>>>>>>>>>>>>>> headers", response.headers)
-    statusResp = print(">>>>>>>>>>>>>>>> status_code", response.status_code)
-    if response.status_code != 200:
-        return "Please enter a typeName!!! " + str(urlResponse) + str(txtResponse) + str(headerResp) + str(PropertyName) + str(Literal) +str(payload)
-    else:
-        features = response.json()
-    return features
-    # if status_code != 200:
-    #     return "NOOOOOO!!!"
-    # #     return response.json()
-<<<<<<< HEAD
-    # return response.json()
-=======
-    # return response.json()
->>>>>>> 62249c30947aa640d2b485fa81042c3ff1457514
+    graphQlQuery = request.data.decode('utf-8')
+    schema = graphene.Schema(query=Query)
+
+
+    graphQlQuery = '''
+     goodbye {
+            goodbye
+
+     }
+    '''
+    result = schema.execute(graphQlQuery)
+    
+    # result = schema.execute(graphQlQuery)
+    #  TODO: error handling
+    return result.data["goodbye"]

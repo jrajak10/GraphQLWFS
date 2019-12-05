@@ -4,7 +4,7 @@
 # gcloud components install beta
 # gcloud components update
 
-# python env
+python env
 python -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
