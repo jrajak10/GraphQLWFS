@@ -3,7 +3,7 @@ import os
 import graphene
 def fetchFeaturesFromWFS(count, typeNames, filters):
     OS_KEY = os.getenv('OS_KEY', '????????')
-    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key={}&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
+    wfsApiBaseUrl = "https://osdatahubapi.os.uk/OSFeaturesAPI/wfs/v1?service=wfs&request=GetFeature&key=MfGatryANoVWNLZwfkdpTFC1FWhRkwRQ&version=2.0.0&outputformat=geoJSON".format(OS_KEY)
     payload = {
         'typeNames': typeNames,
         'count': count
@@ -71,13 +71,6 @@ class Query(graphene.ObjectType):
         filters[propertyName] = literal
         return fetchFeaturesFromWFS(count, typeNames, filters)
 
-    # { 
-    #      boundaryLinePollingDistrict(
-    #         first: 5, 
-    #         ward: "Bottisham Ward",
-    #         parish: "Burrough Green CP"
-    #     ) 
-    # }
 
     def resolve_boundaryLinePollingDistrict(self, info, first, ward, parish):
         filters = {
@@ -85,6 +78,7 @@ class Query(graphene.ObjectType):
             "parish": parish
         }  
         return  fetchFeaturesFromWFS(count=first, typeNames="osfeatures:BoundaryLine_PollingDistrict", filters=filters) 
+
 
 
 """HTTP Cloud Function.
@@ -97,8 +91,22 @@ Returns:
     <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
 """
 def graphqlwfs(request):
-    graphQlQuery = request.data.decode('utf-8')
+    # graphQlQuery = request.data.decode('utf-8')
     schema = graphene.Schema(query=Query)
+
+    graphQlQuery = '''
+         
+         query{ 
+         hello(
+            count: 1, 
+            propertyName: "Ward", 
+            literal: "Bottisham Ward",
+            typeNames: "osfeatures:BoundaryLine_PollingDistrict"
+        ) 
+    }
+
+        
+        '''
 
     result = schema.execute(graphQlQuery)
     #  TODO: error handling
