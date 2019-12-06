@@ -3,4 +3,9 @@ google-cloud-storage
 xmltodict
 pytest
 flask
+<<<<<<< HEAD
 requests
+=======
+requests
+graphene
+>>>>>>> 8444b3ff74d23ab6ba06df92d076fa3f08a15fae
